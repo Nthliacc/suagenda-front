@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {useInputValue} from '../../../components/Hooks'
+import AddIcon from '@material-ui/icons/PersonAdd';
+import {useInputValue} from '../../../components/Hooks';
+import { PaperBox } from '../PaperBox';
+import { baseUrl } from '../../../constants';
 
-export const Add = () => {
+export const AddContact = () => {
+  const history = useHistory();
   const [open, setOpen] = useState(false);
   const [name, onChangeName] = useInputValue();
-  const [email, onChangeEmail] = useInputValue();
-  const [phone, onChangePhone] = useInputValue();
+  const [emails, onChangeEmail] = useInputValue();
+  const [phones, onChangePhone] = useInputValue();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -20,15 +26,35 @@ export const Add = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const onClickSubmit = () => {
-    console.log("foi")
+
+  const onClickSubmit = async () => {
+    const token = localStorage.getItem("token");
+    if (token === null) {
+        history.push("/");
+    }; 
+    const body = {
+      name: name,
+      emails: emails,
+      phones: phones
+    };
+    axios
+      .post(`${baseUrl}/add-contact`, body,
+      {
+        headers: { "Content-Type": "application/json", 'token': `${token}` }
+      })
+      .then((response) => {
+        localStorage.setItem("token", response.data.acessToken);
+        console.log(response.data.message)
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.log("Error: ", error.response.data)
+      });
   };
 
   return (
     <div>
-      <Button variant="contained" onClick={handleClickOpen}>
-        Add contato
-      </Button>
+      <PaperBox text={'Adicionar contato '} Icon={<AddIcon color='secondary'/>} onClick={handleClickOpen}/> 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Adicionar Contato</DialogTitle>
         <DialogContent>
@@ -40,6 +66,7 @@ export const Add = () => {
             fullWidth
             value={name}
             onChange={onChangeName}
+            required={true}
           />
           <TextField
             autoFocus
@@ -47,16 +74,18 @@ export const Add = () => {
             label="Email"
             type="email"
             fullWidth
-            value={email}
+            value={emails}
             onChange={onChangeEmail}
+            required={true}
           />
           <TextField
             margin="dense"
             label="Telefone"
             type="phone"
             fullWidth
-            value={phone}
+            value={phones}
             onChange={onChangePhone}
+            required={true}
             />
         </DialogContent>
         <DialogActions>
@@ -64,7 +93,7 @@ export const Add = () => {
             Cancelar
           </Button>
           <Button onClick={onClickSubmit} variant="contained" color="primary">
-            Entrar
+            Adicionar
           </Button>
         </DialogActions>
       </Dialog>

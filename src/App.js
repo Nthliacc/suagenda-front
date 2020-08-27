@@ -1,6 +1,6 @@
 import React from 'react';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Router } from './components/Router';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
   palette: {
@@ -15,7 +15,7 @@ const theme = createMuiTheme({
 
 export const App = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} >
       < Router />
     </ThemeProvider>
   );

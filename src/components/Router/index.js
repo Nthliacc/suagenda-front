@@ -2,6 +2,8 @@ import React from "react";
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 import { HomePage } from "../../pages/HomePage";
 import { DashboardPage } from "../../pages/DashboardPage";
+import { AddContact } from "../../pages/DashboardPage/AddContact";
+import { PageError } from "../../pages/PageError";
 
 export const Router = () => {
   return (
@@ -13,8 +15,11 @@ export const Router = () => {
         <Route exact path="/dashboard">
           <DashboardPage />
         </Route>
+        <Route exact path="/add-contact">
+          <AddContact />
+        </Route>
         <Route path="/">
-          Error 404!!
+          <PageError />
         </Route>
       </Switch>
     </BrowserRouter>

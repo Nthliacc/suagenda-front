@@ -7,16 +7,36 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useInputValue } from '../../components/Hooks';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios';
+import { baseUrl } from '../../constants';
 
 export const Signup = () => {
   const [open, setOpen] = useState(false);
   const [name, onChangeName] = useInputValue();
-  const [email, onChangeEmail] = useInputValue();
-  const [phone, onChangePhone] = useInputValue();
+  const [emails, onChangeEmail] = useInputValue();
+  const [phones, onChangePhone] = useInputValue();
 
   const history = useHistory();
-  const onClickSubmit = () => {
-    history.push("/dashboard");
+
+  const onClickSubmit = async () => {
+    const body = {
+      name: name,
+      emails: emails,
+      phones: phones
+    };
+    axios
+      .post(`${baseUrl}/signup`, body,
+      {
+          headers: {'Content-Type': 'application/json'}
+      })
+      .then((response) => {
+        localStorage.setItem("token", response.data.acessToken);
+        localStorage.setItem("name", name);
+        history.push("/dashboard");
+      })
+      .catch((error) => {
+        console.log("Error: ", error.response.data)
+      });
   };
 
   const handleClickOpen = () => {
@@ -30,7 +50,7 @@ export const Signup = () => {
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen}>
-        Criar minha agenda
+        Criar agenda
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Inscrição</DialogTitle>
@@ -49,7 +69,7 @@ export const Signup = () => {
             label="Email"
             type="email"
             fullWidth
-            value={email}
+            value={emails}
             onChange={onChangeEmail}
           />
           <TextField
@@ -57,7 +77,7 @@ export const Signup = () => {
             label="Telefone"
             type="phone"
             fullWidth
-            value={phone}
+            value={phones}
             onChange={onChangePhone}
           />
         </DialogContent>

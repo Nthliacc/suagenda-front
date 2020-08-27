@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { HeaderContainer } from './HeaderContainer';
 import { Section } from './Section';
-import { Container, Header } from './styled';
+import { Container } from './styled';
+import { useHistory } from 'react-router-dom';
 
 export const DashboardPage = () => {
+  const history = useHistory();
+  const token = localStorage.getItem("token");
+  if (token === null) {
+    history.push("/");
+  }
+
+  useEffect(() => {
+  }, [history, token]);
+
   return (
     <Container>
-      <Header>
-          <h2>Bem vind@, "Pessoa"!</h2>
-      </Header>
+      <HeaderContainer />
       <Section />
     </Container>
   );

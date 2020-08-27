@@ -8,15 +8,27 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useInputValue } from '../../components/Hooks';
+import { baseUrl } from '../../constants';
+import axios from 'axios';
 
 export const Login = () => {
-  const history = useHistory();
-  const onClickSubmit = () => {
-    history.push("/dashboard");
-  };
-
   const [open, setOpen] = useState(false);
-  const [name, onChangeName] = useInputValue();
+  const [name, onChangeName] = useInputValue('');
+
+  const history = useHistory();
+
+  const onClickSubmit = async () => {
+    axios
+    .post(`${baseUrl}/login`, {name})
+    .then((response) => {
+      localStorage.setItem("token", response.data.acessToken);
+      localStorage.setItem("name", name);
+      history.push("/dashboard");
+    })
+    .catch((error) => {
+      console.log("Error: ", error.response.data)
+    })
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,7 +41,7 @@ export const Login = () => {
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen}>
-        Ver meu contatos
+        Fazer Login
       </Button>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Login</DialogTitle>

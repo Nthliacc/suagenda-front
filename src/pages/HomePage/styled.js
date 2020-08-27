@@ -16,4 +16,13 @@ export const Buttons = styled.div`
     padding: 32px;
     display: flex;
     justify-content: space-evenly;
+    
+    @media(max-width: 800px) {
+        padding: 26px;
+        flex-direction: column;
+        align-items: center;
+        button{
+            margin: 12px;
+        }
+    }
 `;
